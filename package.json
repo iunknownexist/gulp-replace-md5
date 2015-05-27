@@ -1,0 +1,17 @@
+{
+  "name": "gulp-replace-md5",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "glob": "^5.0.10",
+    "gulp": "^3.8.11",
+    "gulp-util": "^3.0.4",
+    "node.extend": "^1.1.4",
+    "through2": "^0.6.5"
+  },
+  "author": {
+    "name": "liupeng",
+    "mail": "phil.liu.cn@gmail.com"
+  },
+  "devDependencies": {}
+}
