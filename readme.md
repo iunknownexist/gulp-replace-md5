@@ -23,8 +23,8 @@ gulp.task("replaceMd5", function() {
 
 ### Options
 
-* `marker` default `{{static-replacer}}`, you can define it your own. Your html that need to be replaced should like also
-change with the `marker`.
+* `marker` default `{{static-replacer}}`, you can define it your own. The static resources of the html or others that
+need to be replaced should be like below. Only these suffixed with `marker` will be replaced.
 ```html
 <!doctype html>
 <head>
@@ -36,9 +36,10 @@ change with the `marker`.
 </body>
 </html>
 ```
-* `hashFunction` We can define the hashFunction ourselves. Currenly, the `hashFunction` is listed below.
-We can redefined it according to our demands.
+* `hashFunction` You can define the hashFunction yourself. Currently, the `hashFunction` is listed below.
+you can redefined it according to your demands.
 ```javascript
+// transfer the ../js/hello.js{{static-replacer}} to ../js/hello_md5.js
 function(filename) {
      return function(content) {
             return filename.split('.').map(function(item, i, arr) {
