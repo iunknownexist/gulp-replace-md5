@@ -1,5 +1,5 @@
 # gulp-replace-md5
-a gulp plugin to replace static file url with file-md5.
+A gulp plugin to replace static file url with file-md5.
 
 ## Usage
 
@@ -9,7 +9,7 @@ var gulp = require("gulp"),
 
 gulp.task("replaceMd5", function() {
 
-    gulp.src("../html/**")
+    return gulp.src("../html/**")
         // options is optional
         .pipe(gulpReplaceMd5( options, ["../js/**", "../css/**", "../img/**"]) )
         .pipe(gulp.dest("./output"));
