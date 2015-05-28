@@ -88,9 +88,6 @@ module.exports = function(options, staticArray) {
             });
         }
 
-        console.log(options.staticHash);
-
-
         // 如果已经定义好了staticHash, 则忽略掉staticArray
         if(options.staticHash) {
 
