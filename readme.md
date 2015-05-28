@@ -50,6 +50,16 @@ function(filename) {
 }
 ```
 
+* `staticHash` Optional. If `staticHash` is set, we will ignore the `staticArray` parameter.
+```javascript
+    {
+        "../js/a.js": "../js/a_md5ed.js",
+        "../js/b.js": "../js/b_md5ed.js",
+        "../css/a.css": "../css/a_md5ed.css",
+        "../css/b.css": "../css/b_md5ed.css"
+    }
+```
+
 ## staticArray
 
 * `staticArray` This is the static file path array. The format is [glob](https://github.com/isaacs/node-glob) format.

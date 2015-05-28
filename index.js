@@ -74,28 +74,28 @@ module.exports = function(options, staticArray) {
                     // 读取文件，算md5值
                     var content = fs.readFileSync(staticFilename, 'utf-8'),
                         staticBaseFileName = path.basename(staticFilename),
-                        staticDirName = path.dirname(staticFilename),
                         relativePath = path.relative(fileDir, staticFilename),
+                        relativeDirName = path.dirname(relativePath),
                         hashFunction = options.hashFunction(staticBaseFileName);
 
 
                     /**
-                     * options.staticHash = { "../js/a.js{{static-replacer}}": "../js/a_md5.js"}
+                     * options.staticHash = { "../js/a.js": "../js/a_md5.js"}
                      */
-                    options.staticHash[relativePath + options.marker] = relativePath + '/' + hashFunction(content);
+                    options.staticHash[relativePath] = relativeDirName + '/' + hashFunction(content);
 
                 });
-
             });
         }
+
+        console.log(options.staticHash);
 
 
         // 如果已经定义好了staticHash, 则忽略掉staticArray
         if(options.staticHash) {
 
-            console.log(options.staticHash);
             for(var i in options.staticHash) {
-                var staticRegexp = new RegExp(i, 'g');
+                var staticRegexp = new RegExp(i + options.marker, 'g');
                 // replace ../js/a.js{{options.marker}} -> ../js/a_md5.js
                 fileContents = fileContents.replace(staticRegexp, options.staticHash[i]);
             }
