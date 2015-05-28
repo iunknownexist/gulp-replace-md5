@@ -55,7 +55,9 @@ need to be replaced should be like below. Only these suffixed with `marker` will
     <link href="../css/hello.css{{static-replacer}}" type="text/css" rel="stylesheet"/>
 </head>
 <body>
-<script src="../js/hello.css{{static-replacer}}" ></script>
+<script src="../js/hello.js{{static-replacer}}" ></script>
+<!-- this js won't be replaced -->
+<script src="../js/world.js" ></script>
 </body>
 </html>
 ```
