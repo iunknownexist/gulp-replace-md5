@@ -14,8 +14,31 @@ gulp.task("replaceMd5", function() {
         .pipe(gulpReplaceMd5( options, ["../js/**", "../css/**", "../img/**"]) )
         .pipe(gulp.dest("./output"));
 });
-
 ```
+
+Before the html is like this.
+```html
+<!doctype html>
+<head>
+<link rel="stylesheet" type="text/css" href="../css/hello.css{{static-replacer}}" />
+</head>
+<body>
+<script src="../js/hello.js{{static-replacer}}"></script>
+</body>
+</html>
+```
+After replacement, the html is like this.
+```html
+<!doctype html>
+<head>
+<link rel="stylesheet" type="text/css" href="../css/hello_7df0asdf3.css" />
+</head>
+<body>
+<script src="../js/hello_8df7asdf9.js"></script>
+</body>
+</html>
+```
+
 ## gulpReplaceMd5([options], [staticArray])
 
 * `options` {Object}
