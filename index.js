@@ -10,10 +10,12 @@ var through = require('through2')
     , path = require('path')
     , glob = require('glob');
 
-module.exports = function(options, staticArray) {
+module.exports = function(options) {
 
     var defaults = {
-            marker: '{{static-replacer}}',
+            openTag: '{{',
+            closeTag: '}}',
+            base: '',
             hashFunction: function(filename) {
                 return function(content) {
                     return filename.split('.').map(function(item, i, arr) {
@@ -25,13 +27,13 @@ module.exports = function(options, staticArray) {
         },
         fileContents = '';
 
-    // 如果options不是object
-    if(Object.prototype.toString.call(options) !== "[object Object]") {
-        staticArray = options || [];
-        options = {};
-    }
-
     options = extend(defaults, options || {});
+
+    if(!options.base && !options.staticHash) {
+
+        throw new gutil.PluginError('gulp-replace-md5', 'base or staticHash at least one must be set');
+        return;
+    }
 
     return through.obj(function(file, encoding, cb) {
 
@@ -50,50 +52,63 @@ module.exports = function(options, staticArray) {
 
         fileContents = file.contents.toString('utf-8');
 
-        // 如果staticHash没有设置，则使用staticArray中的内容来生成一个staticHash
+        // 如果staticHash没有设置，则通过正则匹配html中的内容来生成一个staticHash
         if(!options.staticHash) {
 
             options.staticHash = {};
-
-            if(!staticArray) {
-                this.emit('error', new gutil.PluginError('gulp-debug', 'second parameter must be set.'));
-                return cb();
-            }
-
-            if(typeof staticArray === 'string') {
-                staticArray = [staticArray];
-            }
-
-            // 使用staticArray来生成staticHash
-            staticArray.forEach(function(staticUrl) {
-                var staticFilenames = [];
-                staticUrl &&  (staticFilenames = glob.sync(staticUrl, { nodir: true }));
-
-                staticFilenames.forEach(function(staticFilename) {
-                    // 对 filename进行处理
-                    // 读取文件，算md5值
-                    var content = fs.readFileSync(staticFilename, 'utf-8'),
-                        staticBaseFileName = path.basename(staticFilename),
-                        relativePath = path.relative(fileDir, staticFilename),
-                        relativeDirName = path.dirname(relativePath),
-                        hashFunction = options.hashFunction(staticBaseFileName);
-
-
-                    /**
-                     * options.staticHash = { "../js/a.js": "../js/a_md5.js"}
-                     */
-                    options.staticHash[relativePath] = relativeDirName + '/' + hashFunction(content);
-
-                });
-            });
         }
+
+        var staticRegexp = new RegExp(options.openTag + '\\s*?' + '(.*?)' + '\\s*?' + options.closeTag, 'g'),
+        // get /a/js/a.js from {{/a/js/a.js}}
+            matches = [];
+
+        fileContents.replace(staticRegexp, function ($1, $2) {
+            matches.push($2);
+        });
+
+
+        matches.forEach(function (staticUrl) {
+
+            // 如果没有记录在staticHash里面
+            if (!options.staticHash[staticUrl]) {
+
+                if (path.isAbsolute(staticUrl)) {
+                    try {
+                        var staticString = fs.readFileSync(options.base + staticUrl, 'utf-8'),
+                            staticUrlBaseFileName = path.basename(staticUrl),
+                            staticUrlBaseDirName = path.dirname(staticUrl);
+
+                        // /a/b/c.js -> /base/a/b/c_1212312.js
+                        options.staticHash[staticUrl] = path.normalize(options.base + '/' + staticUrlBaseDirName + '/' + options.hashFunction(staticUrlBaseFileName)(staticString));
+
+                    } catch (e) {
+                        console.error(e);
+                    }
+                } else {
+
+                    try {
+
+                        var relativeStaticUrl = path.resolve(fileDir, staticUrl),
+                            staticString = fs.readFileSync(relativeStaticUrl, 'utf-8'),
+                            staticUrlBaseFileName = path.basename(staticUrl),
+                            staticUrlBaseDirName = path.dirname(staticUrl);
+
+                        options.staticHash[staticUrl] = staticUrlBaseDirName + '/' + options.hashFunction(staticUrlBaseFileName)(staticString);
+
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            }
+
+        });
 
         // 如果已经定义好了staticHash, 则忽略掉staticArray
         if(options.staticHash) {
 
             for(var i in options.staticHash) {
-                var staticRegexp = new RegExp(i + options.marker, 'g');
-                // replace ../js/a.js{{options.marker}} -> ../js/a_md5.js
+                var staticRegexp = new RegExp(options.openTag + '\\s*?' + i + '\\s*?' + options.closeTag, 'g');
+                // replace {{/a/b/c.js}} -> /base/a/b/c_dfadf.js
                 fileContents = fileContents.replace(staticRegexp, options.staticHash[i]);
             }
 
