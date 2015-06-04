@@ -91,6 +91,4 @@ function(filename) {
     }
 ```
 
-## staticArray
-
-* `staticArray` This is the static file path array. The format is [glob](https://github.com/isaacs/node-glob) format.
+* `base` defaut ''. If there are absolute path in your html or other files. `base` must be set.
