@@ -78,8 +78,8 @@ module.exports = function(options) {
                             staticUrlBaseFileName = path.basename(staticUrl),
                             staticUrlBaseDirName = path.dirname(staticUrl);
 
-                        // /a/b/c.js -> /base/a/b/c_1212312.js
-                        options.staticHash[staticUrl] = path.normalize(options.base + '/' + staticUrlBaseDirName + '/' + options.hashFunction(staticUrlBaseFileName)(staticString));
+                        // /a/b/c.js -> /a/b/c_1212312.js
+                        options.staticHash[staticUrl] = staticUrlBaseDirName + '/' + options.hashFunction(staticUrlBaseFileName)(staticString);
 
                     } catch (e) {
                         console.error(e);
