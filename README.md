@@ -11,23 +11,26 @@ gulp.task("replaceMd5", function() {
 
     return gulp.src("../html/**")
         // options is optional
-        .pipe(gulpReplaceMd5( options, ["../js/**", "../css/**", "../img/**"]) )
+        .pipe(gulpReplaceMd5( options ) )
         .pipe(gulp.dest("./output"));
 });
 ```
 
 Before the html is like this.
+
 ```html
 <!doctype html>
 <head>
-<link rel="stylesheet" type="text/css" href="../css/hello.css{{static-replacer}}" />
+<link rel="stylesheet" type="text/css" href="{{../css/hello.css}}" />
 </head>
 <body>
-<script src="../js/hello.js{{static-replacer}}"></script>
+<script src="{{../js/hello.js}}"></script>
 </body>
 </html>
 ```
+
 After replacement, the html is like this.
+
 ```html
 <!doctype html>
 <head>
@@ -39,32 +42,34 @@ After replacement, the html is like this.
 </html>
 ```
 
-## gulpReplaceMd5([options], [staticArray])
+## gulpReplaceMd5([options])
 
 * `options` {Object}
-* `staticArray` {String | Array}
 
 ### Options
 
-* `marker` default `{{static-replacer}}`, you can define it your own. The static resources of the html or others that
-need to be replaced should be like below. Only these suffixed with `marker` will be replaced.
+* `openTag` default `{{`.
+* `closeTag` default `}}`. Only those surrounded with `openTag` and `closeTag` will be replaced.
+
 ```html
 <!doctype html>
 <head>
     <title></title>
-    <link href="../css/hello.css{{static-replacer}}" type="text/css" rel="stylesheet"/>
+    <link href="{{../css/hello.css}}" type="text/css" rel="stylesheet"/>
 </head>
 <body>
-<script src="../js/hello.js{{static-replacer}}" ></script>
+<script src="{{../js/hello.js}}" ></script>
 <!-- this js won't be replaced -->
 <script src="../js/world.js" ></script>
 </body>
 </html>
 ```
+
 * `hashFunction` You can define the hashFunction yourself. Currently, the `hashFunction` is listed below.
 you can redefined it according to your demands.
+
 ```javascript
-// transfer the ../js/hello.js{{static-replacer}} to ../js/hello_md5.js
+// transfer the {{../js/hello.js}} to ../js/hello_md5.js
 function(filename) {
      return function(content) {
             return filename.split('.').map(function(item, i, arr) {
@@ -75,7 +80,8 @@ function(filename) {
 }
 ```
 
-* `staticHash` Optional. If `staticHash` is set, we will ignore the `staticArray` parameter.
+* `staticHash` Optional. Sometimes, you want to designate some url's corresponding urls. Use this.
+
 ```javascript
     {
         "../js/a.js": "../js/a_md5ed.js",

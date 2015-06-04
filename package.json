@@ -1,6 +1,6 @@
 {
   "name": "gulp-replace-md5",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "index.js",
   "dependencies": {
     "glob": "^5.0.10",
