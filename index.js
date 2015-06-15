@@ -92,7 +92,7 @@ module.exports = function (options) {
                     }
                 } catch (e) {
 
-                    _that.emit('error', new gutil.PluginError('gulp-replace-md5', 'generate staticHash error! ' + e.message));
+                    console.error('[gulp-replace-md5] generate staticHash error! ' + e.message);
                 }
             }
 
