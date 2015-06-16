@@ -47,7 +47,7 @@ module.exports = function (options) {
 
         fileContents = file.contents.toString('utf-8');
 
-        var staticRegexp = new RegExp(options.openTag + '\\s*?' + '(.*?)' + '\\s*?' + options.closeTag, 'g'),
+        var staticRegexp = new RegExp('(?:href|src)\\s*?=\\s*?[\"\']' + options.openTag + '\\s*?' + '(.*?)' + '\\s*?' + options.closeTag, 'g'),
         // get /a/js/a.js from {{/a/js/a.js}}
             matches = [];
 
